@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue';
+import '@/scss/grid.scss';
+import '@/scss/shapes.scss';
+import '@/scss/menu.scss';
+
+import { computed, onMounted, useTemplateRef, ref } from 'vue';
 import { usePlot } from '@/composables/usePlot';
 import { Shapes } from '@/utils/shapes';
+
+const showMenu = ref(true);
+
+const showGrid = ref(true);
 
 const canvas = useTemplateRef<SVGSVGElement>("canvas");
 const plot = usePlot(canvas);
@@ -21,6 +29,10 @@ function plotClick(event: MouseEvent) {
   }
 }
 
+const classes = computed(() => {
+  return { "canvas--hide-grid": !showGrid.value }
+});
+
 onMounted(() => {
   if (!canvas.value) {
     console.error("No SVG element with template ref 'canvas' found");
@@ -36,52 +48,34 @@ onMounted(() => {
 </script>
 
 <template>
-  <svg class="canvas" ref="canvas"></svg>
+  <div class="menu" :class="{ 'menu--hide': !showMenu }">
+    <button class="menu__header" @click="showMenu = !showMenu" type="button">
+      <h1 class="menu__title">Plot</h1>
+      <svg fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="4" cy="4" r="3" class="menu-circle"></circle>
+        <circle cx="12" cy="4" r="3" class="menu-circle"></circle>
+        <circle cx="20" cy="4" r="3" class="menu-circle"></circle>
+      </svg>
+    </button>
+
+    <div class="menu__content">
+      <div class="menu__description">
+        Click on the canvas to add points. After adding two points, a line will be drawn between them.
+      </div>
+      <div class="menu__options">
+        <label class="menu__option" for="showGrid">
+          <input type="checkbox" v-model="showGrid" id="showGrid" />
+          Show Grid
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <svg class="canvas" :class="classes" ref="canvas"></svg>
 </template>
 
-<style>
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#app,
-.canvas {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-family: arial;
-}
-
-.canvas {
-  background-color: #fcfcfb;
-}
-
-.controls {
-  position: fixed;
-  left: 40px;
-  top: 40px;
-  background: #e8f1fa99;
-  width: 160px;
-  height: 240px;
-  padding: 20px;
-}
-
-.c-grid-line {
-  stroke: #ddd;
-}
-
-.c-circle {
-  fill: #e8f1fa;
-  stroke: #3f6aa8;
-}
-
-.c-line--between {
-  stroke: #3f6aa8;
+<style lang="scss">
+.canvas--hide-grid .c-grid-line {
+  stroke: none;
 }
 </style>
