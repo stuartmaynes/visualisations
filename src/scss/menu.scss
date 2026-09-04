@@ -1,0 +1,71 @@
+.menu {
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  border-radius: 8px;
+  width: 320px;
+  color: #192a45;
+}
+
+.menu__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  width: 100%;
+}
+
+.menu__title {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 900;
+}
+
+.menu-circle {
+  fill: #fff;
+  stroke: #192a45;
+}
+
+.menu--hide .menu-circle {
+  stroke: #192a45;
+  fill: #192a45;
+}
+
+.menu__header svg {
+  height: 8px;
+  width: 24px;
+}
+
+.menu__header:hover .menu-circle {
+  stroke: #3273F6;
+  fill: #3273F6;
+}
+
+.menu--hide .menu__content {
+  display: none;
+}
+
+.menu__description {
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  border-bottom: 1px solid #efefef;
+  padding-bottom: 20px;
+  padding-top: 10px;
+}
+
+.menu__option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+
