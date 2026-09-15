@@ -6,5 +6,8 @@ export function usePlot(plotRef: Ref<SVGSVGElement | null>) {
     plotRef.value?.appendChild(item)
     return item
   }
-  return { add }
+  function snap(value: number, gridSize: number): number {
+    return Math.round(value / gridSize) * gridSize
+  }
+  return { add, snap }
 }

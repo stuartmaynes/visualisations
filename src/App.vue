@@ -7,16 +7,24 @@ import { computed, onMounted, useTemplateRef, ref } from 'vue';
 import { usePlot } from '@/composables/usePlot';
 import { Shapes } from '@/utils/shapes';
 
+const GRID_SIZE = 40;
+
 const showMenu = ref(true);
 
 const showGrid = ref(true);
+const snapToGrid = ref(true);
 
 const canvas = useTemplateRef<SVGSVGElement>("canvas");
 const plot = usePlot(canvas);
 const points: { x: number, y: number }[] = [];
 
+
 function plotClick(event: MouseEvent) {
-  const { x, y } = { x: event?.clientX || 0, y: event?.clientY || 0 }
+  const bound = snapToGrid.value ? GRID_SIZE : 1;
+  const { x, y } = {
+    x: plot.snap(event?.clientX || 0, bound), y: plot.snap(event?.clientY || 0,
+      bound)
+  }
   const circle = Shapes.circle(x, y, 6)
   plot.add(circle, "c-circle")
   points.push({ x, y })
@@ -39,7 +47,7 @@ onMounted(() => {
     return;
   }
 
-  Shapes.grid(canvas.value.clientWidth, canvas.value.clientHeight, 40).forEach((line) => {
+  Shapes.grid(canvas.value.clientWidth * 10, canvas.value.clientHeight * 10, GRID_SIZE).forEach((line) => {
     plot.add(line, "c-grid-line")
   })
 
@@ -67,6 +75,10 @@ onMounted(() => {
           <input type="checkbox" v-model="showGrid" id="showGrid" />
           Show Grid
         </label>
+        <label class="menu__option" for="snapToGrid">
+          <input type="checkbox" v-model="snapToGrid" id="snapToGrid" />
+          Snap to Grid
+        </label>
       </div>
     </div>
   </div>
@@ -75,6 +87,10 @@ onMounted(() => {
 </template>
 
 <style lang="scss">
+body {
+  overflow: hidden;
+}
+
 .canvas--hide-grid .c-grid-line {
   stroke: none;
 }
