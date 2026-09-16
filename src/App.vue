@@ -15,25 +15,47 @@ const showGrid = ref(true);
 const snapToGrid = ref(true);
 
 const canvas = useTemplateRef<SVGSVGElement>("canvas");
-const plot = usePlot(canvas);
+const plot = usePlot(canvas, GRID_SIZE);
 const points: { x: number, y: number }[] = [];
 
+function addPoint(x: number, y: number) {
+  const point = Shapes.circle(x, y, 4)
+
+  plot.add(point, "c-point")
+
+
+  return point;
+}
+
+function addPointLabel(point) {
+  const { x, y } = point.getBoundingClientRect()
+  const label = Shapes.text(x, y, `(${x}, ${y})`)
+
+  plot.add(label, "c-point-label");
+  plot.visible(label, point)
+
+  return label;
+}
+
+function addLine(p1, p2) {
+  const line = Shapes.line(p1.x, p1.y, p2.x, p2.y);
+  plot.add(line, "c-line")
+  points.splice(0)
+}
 
 function plotClick(event: MouseEvent) {
-  const bound = snapToGrid.value ? GRID_SIZE : 1;
   const { x, y } = {
-    x: plot.snap(event?.clientX || 0, bound), y: plot.snap(event?.clientY || 0,
-      bound)
+    x: plot.snap(event?.clientX || 0), y: plot.snap(event?.clientY || 0)
   }
-  const circle = Shapes.circle(x, y, 6)
-  plot.add(circle, "c-circle")
+
+  const point = addPoint(x, y);
+  addPointLabel(point);
+
   points.push({ x, y })
 
   if (points.length === 2) {
     const [p1, p2] = points;
-    const line = Shapes.line(p1.x, p1.y, p2.x, p2.y);
-    plot.add(line, "c-line--between")
-    points.splice(0)
+    addLine(p1, p2)
   }
 }
 

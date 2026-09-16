@@ -31,13 +31,26 @@ export const Shapes = {
   /**
    * Creates an SVGLineElement and sets its x and y positions
    */
-  line(x1: number, y1: number, x2: number, y2: number) {
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+  line(x1: number, y1: number, x2: number, y2: number): SVGLineElement {
+    const line = Shapes.make('line')
     line.setAttribute('x1', x1.toString())
     line.setAttribute('y1', y1.toString())
     line.setAttribute('x2', x2.toString())
     line.setAttribute('y2', y2.toString())
 
     return line
+  },
+
+  make(type: string): SVGElement {
+    return document.createElementNS('http://www.w3.org/2000/svg', type)
+  },
+
+  text(x: number, y: number, str: string): SVGTextElement {
+    const text = Shapes.make('text')
+    text.setAttribute('x', x.toString())
+    text.setAttribute('y', y.toString())
+    text.textContent = str
+
+    return text
   },
 }
