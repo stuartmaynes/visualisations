@@ -6,9 +6,11 @@ export function usePlot(plotRef: Ref<SVGSVGElement | null>, gridSize: number) {
     plotRef.value?.appendChild(item)
     return item
   }
-  function snap(value: number): number {
-    return Math.round(value / gridSize) * gridSize
+
+  function snap(value: number, x: number = gridSize): number {
+    return Math.round(value / x) * x
   }
+
   function visible(item: SVGElement, sibling: SVGElement) {
     if (!plotRef.value?.clientWidth) return
 
@@ -41,5 +43,6 @@ export function usePlot(plotRef: Ref<SVGSVGElement | null>, gridSize: number) {
 
     return item
   }
+
   return { add, visible, snap }
 }

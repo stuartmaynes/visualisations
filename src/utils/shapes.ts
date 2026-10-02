@@ -41,7 +41,7 @@ export const Shapes = {
     return line
   },
 
-  make(type: string): SVGElement {
+  make<K extends keyof SVGElementTagNameMap>(type: K): SVGElementTagNameMap[K] {
     return document.createElementNS('http://www.w3.org/2000/svg', type)
   },
 

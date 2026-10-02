@@ -18,18 +18,24 @@ const canvas = useTemplateRef<SVGSVGElement>("canvas");
 const plot = usePlot(canvas, GRID_SIZE);
 const points: { x: number, y: number }[] = [];
 
+const snapTo = computed(() => {
+  return snapToGrid.value ? GRID_SIZE : 1;
+});
+
 function addPoint(x: number, y: number) {
   const point = Shapes.circle(x, y, 4)
 
   plot.add(point, "c-point")
 
-
   return point;
 }
 
-function addPointLabel(point) {
+function addPointLabel(point: SVGCircleElement) {
   const { x, y } = point.getBoundingClientRect()
-  const label = Shapes.text(x, y, `(${x}, ${y})`)
+  const xPos = plot.snap(x, snapTo.value)
+  const yPos = plot.snap(window.innerHeight - y, snapTo.value);
+
+  const label = Shapes.text(x, y, `(${xPos}, ${yPos})`)
 
   plot.add(label, "c-point-label");
   plot.visible(label, point)
@@ -37,7 +43,7 @@ function addPointLabel(point) {
   return label;
 }
 
-function addLine(p1, p2) {
+function addLine(p1: { x: number, y: number }, p2: { x: number, y: number }) {
   const line = Shapes.line(p1.x, p1.y, p2.x, p2.y);
   plot.add(line, "c-line")
   points.splice(0)
@@ -45,7 +51,7 @@ function addLine(p1, p2) {
 
 function plotClick(event: MouseEvent) {
   const { x, y } = {
-    x: plot.snap(event?.clientX || 0), y: plot.snap(event?.clientY || 0)
+    x: plot.snap(event?.clientX || 0, snapTo.value), y: plot.snap(event?.clientY || 0, snapTo.value)
   }
 
   const point = addPoint(x, y);
@@ -55,7 +61,7 @@ function plotClick(event: MouseEvent) {
 
   if (points.length === 2) {
     const [p1, p2] = points;
-    addLine(p1, p2)
+    if (p1?.x && p1?.y && p2?.x && p2?.y) addLine(p1, p2)
   }
 }
 
